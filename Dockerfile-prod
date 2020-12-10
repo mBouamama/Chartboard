@@ -1,7 +1,6 @@
 FROM bitnami/python:3.8
 
-RUN apt-get update
-RUN apt-get install redis-server -y --no-install-recommends \
+RUN apt-get update && apt-get install --no-install-recommends -y redis-server \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
@@ -9,16 +8,12 @@ RUN groupadd -g 1001 app && useradd -r -u 1001 -g app app
 RUN mkdir /home/app && chown 1001 /home/app
 WORKDIR /home/app
 
-COPY src/ src/
-
-COPY requirements.txt .
-RUN chown -R 1001 /home/app
-
 ENV PATH="/home/app/.local/bin:${PATH}"
 USER 1001
-RUN pip install --upgrade pip
+COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
+COPY src/ src/
 
 EXPOSE 8080
 
-CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8080", "--noreload"]
+CMD ["gunicorn", "--bind", ":8080", "--workers", "2", "--threads", "8", "--timeout", "0", "tipboard.wsgi:application"]
