@@ -1,5 +1,4 @@
 {
-  "TIPBOARD_TOKEN": "abd581219b534c21be6a3ebe7ae96fda",
   "TIPBOARD_URL": "http://0.0.0.0:8080/api",
   "DEFAULT_CONFIG": "stream",
   "REDIS_HOST": "0.0.0.0",
